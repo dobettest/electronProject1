@@ -1,40 +1,87 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>简易计算器</title>
-    <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
-    <link rel="stylesheet" href="index.css">
-  </head>
-  <body>
-    <div class="result"><span>0</span></div>
-    <div class="input_box"><input type="text"></div>
-    <div class="btn">
-        <span class="btn_item btn_op">%</span>
-        <span class="btn_item btn_op">CE</span>
-        <span class="btn_item btn_op">C</span>
-        <span class="btn_item btn_op">退格</span>
-        <span class="btn_item">1/x</span>
-        <span class="btn_item btn_op">x^2</span>
-        <span class="btn_item btn_op">∑</span>
-        <span class="btn_item btn_op">➗</span>
-        <span class="btn_item">7</span>
-        <span class="btn_item">8</span>
-        <span class="btn_item">9</span>
-        <span class="btn_item btn_op">X</span>
-        <span class="btn_item">4</span>
-        <span class="btn_item">5</span>
-        <span class="btn_item">6</span>
-        <span class="btn_item btn_op">-</span>
-        <span class="btn_item">1</span>
-        <span class="btn_item">2</span>
-        <span class="btn_item">3</span>
-        <span class="btn_item btn_op">+</span>
-        <span class="btn_item btn_op">+/-</span>
-        <span class="btn_item">0</span>
-        <span class="btn_item btn_op">.</span>
-        <span class="btn_item" style="background-color: #D9B498;">=</span>
-    </div>
- </body>
+
+<head>
+  <meta charset="UTF-8">
+  <title>简易计算器</title>
+  <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
+  <!-- <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" /> -->
+  <meta http-equiv="Content-Security-Policy" content="script-src * 'self' 'unsafe-inline' 'unsafe-eval'" />
+  <link rel="stylesheet" href="index.css">
+  <script src="./js/jquery.min.js"></script>
+  <!-- <script src="./js/op.js"></script> -->
+</head>
+
+<body>
+  <div class="result"><span>0</span></div>
+  <div class="input_box"><input type="text" /></div>
+  <div class="btn">
+    <span class="btn_item btn_op">%</span>
+    <span class="btn_item btn_op">x^2</span>
+    <span class="btn_item btn_op">∑</span>
+    <span class="btn_item btn_op">⬅</span>
+    <span class="btn_item">7</span>
+    <span class="btn_item">8</span>
+    <span class="btn_item">9</span>
+    <span class="btn_item btn_op">/</span>
+    <span class="btn_item">4</span>
+    <span class="btn_item">5</span>
+    <span class="btn_item">6</span>
+    <span class="btn_item btn_op">*</span>
+    <span class="btn_item">1</span>
+    <span class="btn_item">2</span>
+    <span class="btn_item">3</span>
+    <span class="btn_item btn_op">-</span>
+    <span class="btn_item btn_op">+</span>
+    <span class="btn_item">0</span>
+    <span class="btn_item btn_op">.</span>
+    <span class="btn_item" id="ans" style="background-color: #D9B498;">=</span>
+  </div>
+  <script>
+    var globalData = {
+      currentValue: "",
+    }
+    function change() {
+      globalData.currentValue = $('input').val()
+    }
+    function isOp(currentValue){
+      if(currentValue.length>0){
+        var reg = RegExp(/\W/)
+        if(currentValue.match(reg))
+          return true
+      }
+      return false
+    }
+    function checkVal(){
+      var r1=RegExp(/\W{2,}0+/,"g")
+      var s="+++00001000234";
+      if(s.match(r1)){
+        console.log("true",s.replace(r1,""))
+      }
+      else
+      console.log("false")
+    }
+    function click() {
+      var d= $(this).text()
+      var r1=RegExp(/\W{2,}/)
+     /* globalData.currentValue=d.match(/[\W,0+]/)&&globalData.currentValue.length==0?"":d;
+      console.log(globalData.currentValue)*/
+      globalData.currentValue=globalData.currentValue.length>0&&isOp(d)&&isOp(globalData.currentValue[globalData.currentValue.length-1])?globalData.currentValue:globalData.currentValue+d
+      globalData.currentValue.length==0?globalData.currentValue=d:""
+      $("input").val(globalData.currentValue)
+    }
+    function cal(){
+      let result=eval(globalData.currentValue.substr(0,globalData.currentValue.length-1))
+      console.log(result)
+      $(".result > span").html(result)
+    }
+    $(window).ready(() => {
+      checkVal()
+      $("input").bind("input", change)
+      $(".btn_item").bind("click",click)
+      $("#ans").bind("click",cal)
+    })
+  </script>
+</body>
+
 </html>
