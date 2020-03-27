@@ -4,7 +4,7 @@
     box-sizing: border-box;
 }
 body{
-    background-color: #F4F4F4;
+    background-color:#F4F4F4;
 }
 .result{
     span{
@@ -38,12 +38,48 @@ body{
 
     }
     .btn_op{
-        // width: 25%;
-        //     display: flex;
-        //     justify-content: center;
-        //     align-items: center;
-        //     height: 50px;
-        //     border: 1px solid gray;
-        background-color: #F0F0F0 !important;
+        width: 25%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 50px;
+            border: 1px solid gray;
+            background-color: #F0F0F0 !important;
     }
+    #ans{
+        width: 25%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50px;
+        border: 1px solid gray;
+    }
+  }
+  .messageBox{
+      position: fixed;
+      top:20vh;
+      left:50vw;
+      width: 280px;
+      height: 150px;
+      border: 1px solid #000;
+    //   background-color:transparent;
+      z-index:999;
+      h1{
+          font-size: 15px;
+          text-align: left;
+          border-bottom: 0.5px solid #000;
+          height: 20px;
+          width: 100%;
+      }
+      p{
+          height: 110px;
+          width: 100%;
+          border-bottom: 0.5px solid #000;
+      }
+      .op{
+          display: flex;
+          justify-content: center;
+          align-items: center;      
+        }
+
   }

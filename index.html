@@ -16,10 +16,10 @@
   <div class="result"><span>0</span></div>
   <div class="input_box"><input type="text" /></div>
   <div class="btn">
-    <span class="btn_item btn_op">%</span>
-    <span class="btn_item btn_op">x^2</span>
-    <span class="btn_item btn_op">∑</span>
-    <span class="btn_item btn_op">⬅</span>
+    <span class="btn_item ">%</span>
+    <span class="btn_item btn_op">^</span>
+    <span class="btn_op btn_sum">∑</span>
+    <span class="btn_op btn_backspace">⬅</span>
     <span class="btn_item">7</span>
     <span class="btn_item">8</span>
     <span class="btn_item">9</span>
@@ -27,59 +27,81 @@
     <span class="btn_item">4</span>
     <span class="btn_item">5</span>
     <span class="btn_item">6</span>
-    <span class="btn_item btn_op">*</span>
-    <span class="btn_item">1</span>
-    <span class="btn_item">2</span>
-    <span class="btn_item">3</span>
-    <span class="btn_item btn_op">-</span>
+    <span class="btn_item btn_op ">*</span>
+    <span class="btn_item ">1</span>
+    <span class="btn_item ">2</span>
+    <span class="btn_item ">3</span>
+    <span class="btn_item btn_op ">-</span>
     <span class="btn_item btn_op">+</span>
-    <span class="btn_item">0</span>
+    <span class="btn_item ">0</span>
     <span class="btn_item btn_op">.</span>
-    <span class="btn_item" id="ans" style="background-color: #D9B498;">=</span>
+    <span id="ans" style="background-color: #D9B498;">=</span>
+    <!-- <div class="messageBox">
+      <h1>提醒</h1>
+      <p>详细信息</p>
+      <div class="op"><span>取消(cancel)</span><span>确定(confirm)</span></div>
+    </div> -->
   </div>
   <script>
     var globalData = {
+      tempvalue: "",
       currentValue: "",
     }
     function change() {
-      globalData.currentValue = $('input').val()
+      globalData.currentValue=globalData.tempvalue=$('input').val()
     }
-    function isOp(currentValue){
-      if(currentValue.length>0){
-        var reg = RegExp(/\W/)
-        if(currentValue.match(reg))
-          return true
+    function checkVal(tempvalue) {
+      var r2 = RegExp(/[^\d\)]\W*[^\d\(]+/)//检测是否连续符号
+      var r1 = RegExp(/^[^0-9\(]/)//检测是否符号开头
+      var r0=RegExp(/^[0]\d/)
+      var r3 = RegExp(/[^\d]+0\d/)//检测是否符号+0数字
+      var r4=RegExp(/[^0-9\%\/\+\=\-\.\*\(\)\^]/)//检测是否是键盘区以外字符
+      if (globalData.tempvalue.match(r0) ||globalData.tempvalue.match(r1) || globalData.tempvalue.match(r2)||globalData.tempvalue.match(r3)||globalData.tempvalue.match(r4)) {
+        globalData.tempvalue = globalData.currentValue.length > 0 ? globalData.currentValue : ""
+        console.log("p")
+        return false;
       }
-      return false
-    }
-    function checkVal(){
-      var r1=RegExp(/\W{2,}0+/,"g")
-      var s="+++00001000234";
-      if(s.match(r1)){
-        console.log("true",s.replace(r1,""))
-      }
-      else
-      console.log("false")
+      return true;
     }
     function click() {
-      var d= $(this).text()
-      var r1=RegExp(/\W{2,}/)
-     /* globalData.currentValue=d.match(/[\W,0+]/)&&globalData.currentValue.length==0?"":d;
-      console.log(globalData.currentValue)*/
-      globalData.currentValue=globalData.currentValue.length>0&&isOp(d)&&isOp(globalData.currentValue[globalData.currentValue.length-1])?globalData.currentValue:globalData.currentValue+d
-      globalData.currentValue.length==0?globalData.currentValue=d:""
-      $("input").val(globalData.currentValue)
+      var d = $(this).text()
+      globalData.tempvalue += d;
+      if (checkVal(globalData.tempvalue)) {
+        globalData.currentValue = globalData.tempvalue
+        $("input").val(globalData.currentValue)
+      }
     }
-    function cal(){
-      let result=eval(globalData.currentValue.substr(0,globalData.currentValue.length-1))
-      console.log(result)
-      $(".result > span").html(result)
+    function cal() {
+      if($('input').val().match(/\d+\^\d+/)){
+      pow($('input').val())
+      return ;
+    }
+      if (checkVal($('input').val())) {
+        let result = eval(globalData.currentValue.toString())
+        console.log(result)
+        $(".result > span").html(result)
+      } else {
+        $(".result > span").html("请修正表达式后再计算")
+      }
+
+    }
+    function pow(val){
+      if(val.match(/\d+\^\d+/)){
+        let res=val.split("^")||[]
+        $(".result >span").html(Math.pow(res[0],res[1]))   
+      }
+    }
+    function del(){
+      $(".result >span").html("0")
+      $("input").val("")
+      globalData.currentValue=globalData.tempvalue=""
     }
     $(window).ready(() => {
-      checkVal()
+      console.log(eval("(1+2)*10"))
       $("input").bind("input", change)
-      $(".btn_item").bind("click",click)
-      $("#ans").bind("click",cal)
+      $(".btn_item").bind("click", click)
+      $("#ans").bind("click", cal)
+      $(".btn_backspace").on("click",del)
     })
   </script>
 </body>
